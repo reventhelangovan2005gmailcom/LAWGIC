@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lawgic - Intelligent Legal Assistant</title>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .search-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .upload-area {
+            border: 2px dashed #bdc3c7;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .analyze-btn:hover {
+            background-color: #1a252f;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+
+        .result-header {
+            background-color: #ecf0f1;
+            padding: 15px 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .result-body {
+            padding: 25px;
+        }
+
+        .download-btn {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background-color: #7f8c8d;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+
+        .mic-btn {
+            margin-top: 10px;
+            background: #ffecec;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #e74c3c;
+        }
+
+        .mic-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .disclaimer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>LAWGIC</h1>
+    <p>AI-Powered Bharatiya Nyaya Sanhita (BNS) Legal Analysis</p>
+</header>
+
+<div class="container">
+
+    <div class="search-card">
+        <form method="POST" enctype="multipart/form-data">
+
+            <label><strong>Case Details:</strong></label>
+
+            <textarea name="case_description" id="case"
+                placeholder="Describe the incident here...">{{ input_text }}</textarea>
+
+            <button type="button" class="mic-btn" onclick="startDictation()">🎤 Speak</button>
+
+            <div class="upload-area">
+                <label>
+                    <strong>📷 Upload FIR / Case Image</strong><br>
+                    <span style="font-size: 0.85rem; color: #7f8c8d;">
+                        Supports JPG / PNG / handwritten notes
+                    </span>
+                </label>
+                <input type="file" name="fir_file" accept="image/*">
+            </div>
+
+            <button type="submit" class="analyze-btn">Analyze Case</button>
+        </form>
+    </div>
+
+    {% if analysis %}
+    <div class="result-card">
+        <div class="result-header">
+            <h2>Comprehensive AI Legal Analysis</h2>
+        </div>
+
+        <div class="result-body">
+            <pre>{{ analysis }}</pre>
+
+            <form action="/download_report" method="POST" target="_blank">
+                <input type="hidden" name="analysis" value="{{ analysis }}">
+                <input type="hidden" name="user_case" value="{{ input_text }}">
+                <button type="submit" class="download-btn">
+                    📄 Download Full Report
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<div class="disclaimer">
+    Disclaimer: This AI system is for academic purposes only.
+    It does not replace professional legal advice.
+</div>
+
+<script>
+function startDictation() {
+    if (window.hasOwnProperty('webkitSpeechRecognition')) {
+        var recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+        recognition.start();
+
+        recognition.onresult = function(e) {
+            document.getElementById('case').value += " " + e.results[0][0].transcript;
+            recognition.stop();
+        };
+
+        recognition.onerror = function() {
+            recognition.stop();
+        };
+    } else {
+        alert("Voice input supported only in Chrome.");
+    }
+}
+</script>
+
+</body>
+</html>

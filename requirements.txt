@@ -1,0 +1,7 @@
+flask
+pandas
+sentence-transformers
+sqlite3
+openai
+fpdf
+python-dotenv
