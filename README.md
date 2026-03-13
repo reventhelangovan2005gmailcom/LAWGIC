@@ -1,6 +1,6 @@
 # LAWGIC – A Scalable framework for Legal Section Recommendation
 
-LAWGIC is an intelligent legal assistance system designed to analyze First Information Report (FIR) descriptions and recommend relevant legal provisions under the Bharatiya Nyaya Sanhita (BNS) and the Indian Penal Code (IPC). The system uses Natural Language Processing (NLP), semantic similarity techniques, and a local Large Language Model (LLM) to interpret case descriptions and generate structured legal analysis.
+LAWGIC is an intelligent legal assistance system designed to analyze First Information Report (FIR) descriptions and recommend relevant legal provisions under the Bharatiya Nyaya Sanhita (BNS). The system uses Natural Language Processing (NLP), semantic similarity techniques, and a local Large Language Model (LLM) to interpret case descriptions and generate structured legal analysis.
 
 This project demonstrates how artificial intelligence can assist in early-stage legal interpretation by automatically identifying applicable legal sections, explaining offenses, and generating structured legal reports.
 
